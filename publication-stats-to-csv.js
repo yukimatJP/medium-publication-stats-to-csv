@@ -1,3 +1,7 @@
+function showInfo(msg) {
+  console.log("[Info] " + msg);
+}
+
 (function() {
   if (! window.jQuery ) {
     var s = document.createElement('script');
@@ -17,13 +21,17 @@ function clickThreeMonthsButton() {
   var threeMonthsBtn = $(".js-time-threeMonths button");
 
   if(threeMonthsBtn.length == 3) {
+    showInfo("Find buttons! Change to 90 days stats.");
     threeMonthsBtn.each(function() {
       $(this).click();
-      console.log(this);
+      console.log($(this));
     });
+    showInfo("done.");
   } else {
+    showInfo("Could not find buttons... Try again.");
     setTimeout(function() {
       clickThreeMonthsButton();
     }, 1000);    
   }
+
 }
