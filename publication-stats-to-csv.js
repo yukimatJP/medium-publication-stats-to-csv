@@ -41,7 +41,7 @@ function getGraphData() {
     // calculate convert rate
     var maxScale = $(yAxis[i]).find("g").last();
     var maxScaleVal = maxScale.find("text").text();
-    var maxScalePos = maxScale.css('transform').replace(/[^0-9\-.,]/g, '').split(',')[5];
+    var maxScalePos = maxScale.css("transform").replace(/[^0-9\-.,]/g, "").split(",")[5];
     convertRate[i] = maxScaleVal / (graphHeight - maxScalePos);
 
     showInfo("maxScaleVal : " + maxScaleVal);
@@ -70,17 +70,20 @@ function downloadCSV(statsData) {
   var today = new Date();
   for(var i=0; i<90; i++) {
     var date = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 90 + i+1);
-    statsDataStr += date + "," + statsData[0][i] + "," + statsData[1][i] + "," + statsData[2][i] + "\n";
+    statsDataStr += [date.getFullYear(), ("0" + (date.getMonth() + 1)).slice(-2), ("0" + date.getDate()).slice(-2)].join("/") + ","
+                 +  statsData[0][i] + ","
+                 +  statsData[1][i] + ","
+                 +  statsData[2][i] + "\n";
   }
   console.log(statsDataStr);
 
-  var pom = document.createElement('a');
-  pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(statsDataStr));
-  pom.setAttribute('download', 'downloads.csv');
+  var pom = document.createElement("a");
+  pom.setAttribute("href", "data:text/plain;charset=utf-8," + encodeURIComponent(statsDataStr));
+  pom.setAttribute("download", "stats_" + date.getFullYear() + (date.getMonth() + 1) + date.getDate() + ".csv");
 
   if (document.createEvent) {
-      var event = document.createEvent('MouseEvents');
-      event.initEvent('click', true, true);
+      var event = document.createEvent("MouseEvents");
+      event.initEvent("click", true, true);
       pom.dispatchEvent(event);
   }
   else {
@@ -92,11 +95,11 @@ function downloadCSV(statsData) {
 (function() {
   // jQuery
   if (! window.jQuery ) {
-    var s = document.createElement('script');
-    s.type = 'text/javascript';
+    var s = document.createElement("script");
+    s.type = "text/javascript";
     s.async = true;
-    s.src = '//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js';
-    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(s);
+    s.src = "//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js";
+    (document.getElementsByTagName("head")[0] || document.getElementsByTagName("body")[0]).appendChild(s);
   }
 
   async(function() {
