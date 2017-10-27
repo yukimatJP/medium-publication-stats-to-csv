@@ -18,7 +18,6 @@ function clickThreeMonthsButton() {
   });
 
   showInfo(separator + "END : Change to 90 days stats");
-  return true;
 }
 
 
@@ -65,6 +64,30 @@ function getGraphData() {
   return statsData;
 }
 
+function downloadCSV(statsData) {
+
+  statsDataStr = "date, minutes read, view, visitors\n";
+  var today = new Date();
+  for(var i=0; i<90; i++) {
+    var date = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 90 + i+1);
+    statsDataStr += date + "," + statsData[0][i] + "," + statsData[1][i] + "," + statsData[2][i] + "\n";
+  }
+  console.log(statsDataStr);
+
+  var pom = document.createElement('a');
+  pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(statsDataStr));
+  pom.setAttribute('download', 'downloads.csv');
+
+  if (document.createEvent) {
+      var event = document.createEvent('MouseEvents');
+      event.initEvent('click', true, true);
+      pom.dispatchEvent(event);
+  }
+  else {
+      pom.click();
+  }
+
+}
 
 (function() {
   // jQuery
@@ -78,7 +101,8 @@ function getGraphData() {
 
   async(function() {
     clickThreeMonthsButton();
-    getGraphData();
+    var statsData = getGraphData();
+    downloadCSV(statsData);
   }, 2000);
 
 }());
