@@ -17,6 +17,8 @@ function async(f, delay) {
   }
 
   var clickThreeMonthsButton = function() {
+    showInfo("Start : Change to 90 days stats");
+
     var threeMonthsBtn = $(".js-time-threeMonths button");
 
     if(threeMonthsBtn.length == 3) {
@@ -25,7 +27,7 @@ function async(f, delay) {
         $(this).click();
         console.log($(this));
       });
-      showInfo("done.");
+      showInfo("End : Change to 90 days stats");
       return true;
     } else {
       showInfo("Could not find buttons... Try again.");
@@ -35,8 +37,19 @@ function async(f, delay) {
   }
 
   var getGraphMaxValue = function() {
+    var convertRate = Array(3);
+    var yAxis = $(".bargraph-yAxis");
+    yAxis.each(function(i) {
+      var maxScale = $(this).find("g").last();
+      var maxScaleVal = maxScale.find("text").text();
+      var maxScalePos = maxScale.css('transform').replace(/[^0-9\-.,]/g, '').split(',')[5];
+      convertRate[i] = maxScaleVal / (225 - maxScalePos);
+      showInfo("maxScaleVal : " + maxScaleVal);
+      showInfo("maxScalePos : " + maxScalePos);
+      showInfo("convertRate : " + convertRate[i]);
+    });
   }
-  
+
   async(function() {
     var d = $.Deferred();
     d.promise()
