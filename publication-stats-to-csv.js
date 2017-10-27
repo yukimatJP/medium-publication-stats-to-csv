@@ -40,27 +40,34 @@ function async(f, delay) {
     showInfo("Start : Get graph data");
 
     var convertRate = Array(3);
+    var statsData = Array(3);
+
     var yAxis = $(".bargraph-yAxis");
-    yAxis.each(function(i) {
-      var maxScale = $(this).find("g").last();
+    var graphs = $(".js-barGraphBars");
+
+    for(var i=0; i<yAxis.length; i++) {
+
+      // get graph height
+      var graphHeight = $(graphs[i]).get(0).getBBox().height;
+      showInfo("graphHeight : " + graphHeight);
+
+      // calculate convert rate
+      var maxScale = $(yAxis[i]).find("g").last();
       var maxScaleVal = maxScale.find("text").text();
       var maxScalePos = maxScale.css('transform').replace(/[^0-9\-.,]/g, '').split(',')[5];
-      convertRate[i] = maxScaleVal / (225 - maxScalePos);
+      convertRate[i] = maxScaleVal / (graphHeight - maxScalePos);
+
       showInfo("maxScaleVal : " + maxScaleVal);
       showInfo("maxScalePos : " + maxScalePos);
       showInfo("convertRate : " + convertRate[i]);
-    });
 
-    var graphBars = $(".js-barGraphBars");
-    graphBars.each(function(i) {
-      var maxGraphBodyHeight = $(this).get(0).getBBox().height;
-      showInfo("maxGraphBodyHeight : " + maxGraphBodyHeight);
-      var graphBars = $(this).find("rect");
+      // calculate each graphBar value
+      var graphBars = $(graphs[i]).find("rect");
       graphBars.each(function() {
         var graphBarHeight = $(this).attr("height") * convertRate[i];
         console.log(graphBarHeight);
       });
-    });
+    }
 
     return "hogehoge";
   }
