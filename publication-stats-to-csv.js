@@ -36,7 +36,9 @@ function async(f, delay) {
 
   }
 
-  var getGraphMaxValue = function() {
+  var getGraphData = function() {
+    showInfo("Start : Get graph data");
+
     var convertRate = Array(3);
     var yAxis = $(".bargraph-yAxis");
     yAxis.each(function(i) {
@@ -48,13 +50,26 @@ function async(f, delay) {
       showInfo("maxScalePos : " + maxScalePos);
       showInfo("convertRate : " + convertRate[i]);
     });
+
+    var graphBars = $(".js-barGraphBars");
+    graphBars.each(function(i) {
+      var maxGraphBodyHeight = $(this).get(0).getBBox().height;
+      showInfo("maxGraphBodyHeight : " + maxGraphBodyHeight);
+      var graphBars = $(this).find("rect");
+      graphBars.each(function() {
+        var graphBarHeight = $(this).attr("height") * convertRate[i];
+        console.log(graphBarHeight);
+      });
+    });
+
+    return "hogehoge";
   }
 
   async(function() {
     var d = $.Deferred();
     d.promise()
       .then(clickThreeMonthsButton()) // change to 90 days stats
-      .then(getGraphMaxValue())
+      .then(getGraphData())
       .fail(function() {
         console.log('common fail' + arguments);
       })
