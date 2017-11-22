@@ -14,21 +14,18 @@ function getGraphData() {
   var yAxis = $(".bargraph-yAxis");
   var graphBars = $(".bargraph-bar");
 
-  var graphHeight = $(graphBars[0]).parent("g").get(0).getBBox().height;
-  showInfo("graphHeight : " + graphHeight);
-
+  var graphHeight = $(".bargraph-gridLines").get(0).getBBox().height;
   var maxScale = $(yAxis).find("g").last();
   var maxScaleVal = maxScale.find("text").text();
-  var maxScalePos = maxScale.css("transform").replace(/[^0-9\-.,]/g, "").split(",")[5];
-  convertRate = maxScaleVal / (graphHeight - maxScalePos);
+  convertRate = maxScaleVal / graphHeight;
 
+  showInfo("graphHeight : " + graphHeight);
   showInfo("maxScaleVal : " + maxScaleVal);
-  showInfo("maxScalePos : " + maxScalePos);
   showInfo("convertRate : " + convertRate);
 
   var graphBarValues = Array();
   graphBars.each(function() {
-    graphBarValues.push($(this).attr("height") * convertRate);
+    graphBarValues.push(Math.ceil($(this).attr("height") * convertRate));
   });
   statsData = graphBarValues;
 
@@ -113,7 +110,7 @@ function downloadCSV(statsData) {
           setTimeout(periodLoop, 2000); // 一つ前の月へ
         } else {
 
-          rowStatsData.unshift(title) // タイトルを先頭列にいれる
+          rowStatsData.unshift(title); // タイトルを先頭列にいれる
           storiesStatsData.push(rowStatsData);
 
           i++;
