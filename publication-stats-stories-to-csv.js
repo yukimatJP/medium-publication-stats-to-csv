@@ -29,9 +29,9 @@ function getGraphData() {
   });
   statsData = graphBarValues;
 
-  console.log(statsData);
-
   showInfo(separator + "done");
+
+  return statsData;
 }
 
 
@@ -56,17 +56,23 @@ function getGraphData() {
     // var i = 0;
     var i = 15; // debug用
 
-    var rowLoop = function() {
-      targetRow = $(tableRows[i]);
-      showInfo(targetRow.find("h2").text());
-      targetRow.click();
+    var storiesStatsData = Array();
 
+    var rowLoop = function() {
+      var targetRow = $(tableRows[i]);
+      targetRow.click();
+      
+      var title = targetRow.find("h2").text();
+      showInfo(title);
+      
       var p = 0;
+
+      rowStatsData = Array();
 
       var periodLoop = function() {
         showInfo("periodLoop : " + p);
 
-        var statsData = getGraphData();
+        rowStatsData = getGraphData().concat(rowStatsData);
 
         p++;
         if(p < scrapePeriod) {
@@ -77,6 +83,8 @@ function getGraphData() {
           if(i<tableRows.length) {
             setTimeout(rowLoop, 2000); // 次の行へ
           }
+          rowStatsData.unshift(title)
+          console.log(rowStatsData);
         }
       }
       setTimeout(periodLoop, 2000);
