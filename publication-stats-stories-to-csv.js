@@ -25,7 +25,9 @@ function getGraphData() {
 
   var graphBarValues = Array();
   graphBars.each(function() {
-    graphBarValues.push(Math.ceil($(this).attr("height") * convertRate));
+    var v = $(this).attr("height") * convertRate;
+    v = Math.ceil(parseInt(v * 100)/100);
+    graphBarValues.push(v);
   });
   statsData = graphBarValues;
 
