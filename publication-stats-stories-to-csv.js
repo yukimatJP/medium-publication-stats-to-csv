@@ -4,10 +4,6 @@ function showInfo(msg) {
   console.log("[Info] " + msg);
 }
 
-function async(f, delay) {
-  setTimeout(f, delay);
-}
-
 (function() {
   // jQuery
   if (! window.jQuery ) {
@@ -18,20 +14,28 @@ function async(f, delay) {
     (document.getElementsByTagName("head")[0] || document.getElementsByTagName("body")[0]).appendChild(s);
   }
 
-  async(function() {
+  setTimeout(function() {
     showInfo("Start scraping")
+
+    var scrapePeriod = 4; // months (30days x scrapePeriod)
+
+    var prev30daysButton = $(".js-showPreviousButton");
     var tableRows = $(".js-statsTable tr.js-statsTableRow");
-    var i = 0;
-    var max = tableRows.length;
-    var scrapingRow = setInterval(function() {
-      target = $(tableRows[i]);
-      showInfo(target.find("h2").text());
-      target.click();
-      i++;
-      if(i == max) {
-        clearInterval(scrapingRow);
+
+    tableRows.each(function(){
+      targetRow = $(this);
+      showInfo(targetRow.find("h2").text());
+      targetRow.click();
+
+      for(var i=0; i<scrapePeriod; i++) {
+
+        // do something.
+
+        prev30daysButton.click();
       }
-    }, 2000);
+
+    });
+
   }, 3000);
 
 }());
