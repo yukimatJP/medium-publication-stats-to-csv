@@ -19,9 +19,9 @@ function getGraphData() {
   var maxScaleVal = maxScale.find("text").text();
   convertRate = maxScaleVal / graphHeight;
 
-  showInfo("graphHeight : " + graphHeight);
-  showInfo("maxScaleVal : " + maxScaleVal);
-  showInfo("convertRate : " + convertRate);
+  // showInfo("graphHeight : " + graphHeight);
+  // showInfo("maxScaleVal : " + maxScaleVal);
+  // showInfo("convertRate : " + convertRate);
 
   var graphBarValues = Array();
   graphBars.each(function() {
@@ -85,8 +85,7 @@ function downloadCSV(statsData) {
     var prev30daysButton = $(".js-showPreviousButton");
     var tableRows = $(".js-statsTable tr.js-statsTableRow");
 
-    // var i = 0;
-    var i = 18; // debug用
+    var i = 0;
 
     var storiesStatsData = Array();
 
@@ -94,7 +93,7 @@ function downloadCSV(statsData) {
       var targetRow = $(tableRows[i]);
       targetRow.click();
       
-      var title = targetRow.find("h2").text();
+      var title = targetRow.find("h2").text().replace(/,/g, " -");
       showInfo(title);
       
       var p = 0;
@@ -107,10 +106,12 @@ function downloadCSV(statsData) {
         rowStatsData = getGraphData().concat(rowStatsData);
 
         p++;
-        if(p < SCRAPING_PERIOD) {
+        if(!prev30daysButton.is(':disabled') && p < SCRAPING_PERIOD) {
           prev30daysButton.click();
           setTimeout(periodLoop, 2000); // 一つ前の月へ
         } else {
+          var paddingArray = Array.apply(null, Array(30*(SCRAPING_PERIOD-p))).map(function () {return 0 });
+          rowStatsData = paddingArray.concat(rowStatsData);
 
           rowStatsData.unshift(title); // タイトルを先頭列にいれる
           storiesStatsData.push(rowStatsData);
@@ -128,7 +129,7 @@ function downloadCSV(statsData) {
     setTimeout(rowLoop, 2000);
 
 
-  }, 3000);
+  }, 2000);
 
 }());
 
