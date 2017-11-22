@@ -43,16 +43,29 @@ function downloadCSV(statsData) {
   var numOfDay = SCRAPING_PERIOD * 30;
 
   var statsHeaderArray = ["title"];
-
   var today = new Date();
-  for(i=0; i<numOfDay; i++) {
+  for(var i=0; i<numOfDay; i++) {
     var date = new Date(today.getFullYear(), today.getMonth(), today.getDate() - numOfDay + i + 1);
     statsHeaderArray.push([date.getFullYear(), ("0" + (date.getMonth() + 1)).slice(-2), ("0" + date.getDate()).slice(-2)].join("/"))
   }
 
-  statsData = [statsHeaderArray].concat(statsData);
+  statsDataStr = statsHeaderArray.join(",") + "\n";
+  for(var i=0; i<statsData.length; i++) {
+    statsDataStr += statsData[i].join(",") + "\n";
+  }
 
-  console.log(statsData);
+  var pom = document.createElement("a");
+  pom.setAttribute("href", "data:text/plain;charset=utf-8," + encodeURIComponent(statsDataStr));
+  pom.setAttribute("download", "stats_" + date.getFullYear() + (date.getMonth() + 1) + date.getDate() + ".csv");
+
+  if (document.createEvent) {
+      var event = document.createEvent("MouseEvents");
+      event.initEvent("click", true, true);
+      pom.dispatchEvent(event);
+  }
+  else {
+      pom.click();
+  }
 
 }
 
@@ -99,7 +112,7 @@ function downloadCSV(statsData) {
           prev30daysButton.click();
           setTimeout(periodLoop, 2000); // 一つ前の月へ
         } else {
-          
+
           rowStatsData.unshift(title) // タイトルを先頭列にいれる
           storiesStatsData.push(rowStatsData);
 
