@@ -23,6 +23,15 @@ function getGraphData() {
   showInfo("maxScalePos : " + maxScalePos);
   showInfo("convertRate : " + convertRate);
 
+  // var graphBarValues = Array();
+  // graphBars.each(function() {
+  //   graphBarValues.push($(this).attr("height") * convertRate);
+  // });
+  // statsData = graphBarValues;
+
+  // console.log(statsData);
+
+  // showInfo(separator + "done");
 }
 
 
@@ -39,24 +48,40 @@ function getGraphData() {
   setTimeout(function() {
     showInfo("Start scraping")
 
-    var scrapePeriod = 4; // months (30days x scrapePeriod)
+    var scrapePeriod = 2; // months (30days x scrapePeriod)
 
     var prev30daysButton = $(".js-showPreviousButton");
     var tableRows = $(".js-statsTable tr.js-statsTableRow");
 
-    tableRows.each(function(){
-      targetRow = $(this);
+    var i = 0;
+
+    var rowLoop = function() {
+      targetRow = $(tableRows[i]);
       showInfo(targetRow.find("h2").text());
       targetRow.click();
 
-      for(var i=0; i<scrapePeriod; i++) {
+      var p = 0;
 
-        var statsData = getGraphData();
+      var periodLoop = function() {
+        showInfo("periodLoop : " + p);
 
-        prev30daysButton.click();
+        // var statsData = getGraphData();
+
+        p++;
+        if(p < scrapePeriod) {
+          prev30daysButton.click();
+          setTimeout(periodLoop, 2000); // 一つ前の月へ
+        } else {
+          i++;
+          if(i<tableRows.length) {
+            setTimeout(rowLoop, 2000); // 次の行へ
+          }
+        }
       }
+      setTimeout(periodLoop, 2000);
+    }
+    setTimeout(rowLoop, 2000);
 
-    });
 
   }, 3000);
 
