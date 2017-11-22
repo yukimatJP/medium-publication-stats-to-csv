@@ -23,15 +23,15 @@ function getGraphData() {
   showInfo("maxScalePos : " + maxScalePos);
   showInfo("convertRate : " + convertRate);
 
-  // var graphBarValues = Array();
-  // graphBars.each(function() {
-  //   graphBarValues.push($(this).attr("height") * convertRate);
-  // });
-  // statsData = graphBarValues;
+  var graphBarValues = Array();
+  graphBars.each(function() {
+    graphBarValues.push($(this).attr("height") * convertRate);
+  });
+  statsData = graphBarValues;
 
-  // console.log(statsData);
+  console.log(statsData);
 
-  // showInfo(separator + "done");
+  showInfo(separator + "done");
 }
 
 
@@ -53,7 +53,8 @@ function getGraphData() {
     var prev30daysButton = $(".js-showPreviousButton");
     var tableRows = $(".js-statsTable tr.js-statsTableRow");
 
-    var i = 0;
+    // var i = 0;
+    var i = 15; // debug用
 
     var rowLoop = function() {
       targetRow = $(tableRows[i]);
@@ -65,7 +66,7 @@ function getGraphData() {
       var periodLoop = function() {
         showInfo("periodLoop : " + p);
 
-        // var statsData = getGraphData();
+        var statsData = getGraphData();
 
         p++;
         if(p < scrapePeriod) {
