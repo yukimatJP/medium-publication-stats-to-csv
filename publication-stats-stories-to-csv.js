@@ -1,5 +1,8 @@
 var separator = "-----------------------> ";
 
+var SCRAPING_PERIOD = 2; // months (30days x SCRAPING_PERIOD)
+
+
 function showInfo(msg) {
   console.log("[Info] " + msg);
 }
@@ -35,6 +38,25 @@ function getGraphData() {
 }
 
 
+function downloadCSV(statsData) {
+
+  var numOfDay = SCRAPING_PERIOD * 30;
+
+  var statsHeaderArray = ["title"];
+
+  var today = new Date();
+  for(i=0; i<numOfDay; i++) {
+    var date = new Date(today.getFullYear(), today.getMonth(), today.getDate() - numOfDay + i + 1);
+    statsHeaderArray.push([date.getFullYear(), ("0" + (date.getMonth() + 1)).slice(-2), ("0" + date.getDate()).slice(-2)].join("/"))
+  }
+
+  statsData = [statsHeaderArray].concat(statsData);
+
+  console.log(statsData);
+
+}
+
+
 (function() {
   // jQuery
   if (! window.jQuery ) {
@@ -48,13 +70,11 @@ function getGraphData() {
   setTimeout(function() {
     showInfo("Start scraping")
 
-    var scrapePeriod = 2; // months (30days x scrapePeriod)
-
     var prev30daysButton = $(".js-showPreviousButton");
     var tableRows = $(".js-statsTable tr.js-statsTableRow");
 
     // var i = 0;
-    var i = 15; // debug用
+    var i = 18; // debug用
 
     var storiesStatsData = Array();
 
@@ -75,16 +95,20 @@ function getGraphData() {
         rowStatsData = getGraphData().concat(rowStatsData);
 
         p++;
-        if(p < scrapePeriod) {
+        if(p < SCRAPING_PERIOD) {
           prev30daysButton.click();
           setTimeout(periodLoop, 2000); // 一つ前の月へ
         } else {
+          
+          rowStatsData.unshift(title) // タイトルを先頭列にいれる
+          storiesStatsData.push(rowStatsData);
+
           i++;
           if(i<tableRows.length) {
             setTimeout(rowLoop, 2000); // 次の行へ
+          } else {
+            downloadCSV(storiesStatsData);
           }
-          rowStatsData.unshift(title)
-          console.log(rowStatsData);
         }
       }
       setTimeout(periodLoop, 2000);
