@@ -4,6 +4,28 @@ function showInfo(msg) {
   console.log("[Info] " + msg);
 }
 
+
+function getGraphData() {
+  showInfo(separator + "START : Get graph data");
+
+  var yAxis = $(".bargraph-yAxis");
+  var graphBars = $(".bargraph-bar");
+
+  var graphHeight = $(graphBars[0]).parent("g").get(0).getBBox().height;
+  showInfo("graphHeight : " + graphHeight);
+
+  var maxScale = $(yAxis).find("g").last();
+  var maxScaleVal = maxScale.find("text").text();
+  var maxScalePos = maxScale.css("transform").replace(/[^0-9\-.,]/g, "").split(",")[5];
+  convertRate = maxScaleVal / (graphHeight - maxScalePos);
+
+  showInfo("maxScaleVal : " + maxScaleVal);
+  showInfo("maxScalePos : " + maxScalePos);
+  showInfo("convertRate : " + convertRate);
+
+}
+
+
 (function() {
   // jQuery
   if (! window.jQuery ) {
@@ -29,7 +51,7 @@ function showInfo(msg) {
 
       for(var i=0; i<scrapePeriod; i++) {
 
-        // do something.
+        var statsData = getGraphData();
 
         prev30daysButton.click();
       }
