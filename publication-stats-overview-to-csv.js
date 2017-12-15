@@ -29,6 +29,8 @@ function getGraphData() {
 
   var yAxis = $(".bargraph-yAxis");
   var graphs = $(".js-barGraphBars");
+  var gridLines = $(".bargraph-gridLines");
+  var hoveredValues = $(".js-readingTimeStatsText");
 
   for(var i=0; i<yAxis.length; i++) {
 
@@ -41,20 +43,38 @@ function getGraphData() {
     // calculate convert rate
     var maxScale = $(yAxis[i]).find("g").last();
     var maxScaleVal = maxScale.find("text").text();
-    var maxScalePos = maxScale.css("transform").replace(/[^0-9\-.,]/g, "").split(",")[5];
-    convertRate[i] = maxScaleVal / (graphHeight - maxScalePos);
+    var maxScaleHeight = $(gridLines[i]).get(0).getBBox().height;
+    var maxVal = maxScaleVal; // 未実装
+    var maxHeight = maxScaleHeight;
 
+    showInfo("maxScaleHeight : " + maxScaleHeight);
     showInfo("maxScaleVal : " + maxScaleVal);
-    showInfo("maxScalePos : " + maxScalePos);
-    showInfo("convertRate : " + convertRate[i]);
 
     // calculate each graphBar value
     var graphBarValues = Array();
     var graphBars = $(graphs[i]).find("rect");
     graphBars.each(function() {
-      graphBarValues.push($(this).attr("height") * convertRate[i]);
+      var barHeight = $(this).attr("height");
+      graphBarValues.push(barHeight);
+      if(barHeight - maxHeight > 0) {
+        maxHeight = barHeight;
+        showInfo("maxHeight : " + maxHeight);
+        // TODO: マウスオーバーで最大値を取ってくる必要がある
+        // $(this).trigger('mouseenter');
+        // maxVal = $(hoveredValues[i]).find("h2").text();
+      }
     });
+
+    // convertRate[i] = maxVal / maxHeight; // TODO: maxVal を取得する
+    convertRate[i] = maxHeight;
+    showInfo("convertRate : " + convertRate[i]);
+
+    // for(var j=0; j<graphBarValues.length; j++) {
+    //   graphBarValues[j] *= convertRate[i]
+    // }
+
     statsData[i] = graphBarValues;
+    statsData[i].unshift(convertRate[i]);
 
     showInfo(separator + "done");
   }
@@ -66,9 +86,10 @@ function getGraphData() {
 
 function downloadCSV(statsData) {
 
-  statsDataStr = "date, minutes read, view, visitors\n";
+  statsDataStr = "date, minutes read, view, visitors\n"
+                +"convertRate, " + statsData[0][0] + "," + statsData[1][0] + "," + statsData[2][0] + "\n";
   var today = new Date();
-  for(var i=0; i<90; i++) {
+  for(var i=1; i<90; i++) {
     var date = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 90 + i+1);
     statsDataStr += [date.getFullYear(), ("0" + (date.getMonth() + 1)).slice(-2), ("0" + date.getDate()).slice(-2)].join("/") + ","
                  +  statsData[0][i] + ","
@@ -104,9 +125,11 @@ function downloadCSV(statsData) {
 
   async(function() {
     clickThreeMonthsButton();
-    var statsData = getGraphData();
-    downloadCSV(statsData);
-  }, 2000);
+    async(function() {
+      var statsData = getGraphData();
+      downloadCSV(statsData);
+    }, 2000);
+  }, 5000);
 
 }());
 
