@@ -24,7 +24,7 @@ function clickThreeMonthsButton() {
 function getGraphData() {
   showInfo(separator + "START : Get graph data");
 
-  var convertRate = Array(3);
+  var digitAccuracy = [3, 0, 0]; // 有効数字の桁数
   var statsData = Array(3);
 
   var yAxis = $(".bargraph-yAxis");
@@ -44,37 +44,24 @@ function getGraphData() {
     var maxScale = $(yAxis[i]).find("g").last();
     var maxScaleVal = maxScale.find("text").text();
     var maxScaleHeight = $(gridLines[i]).get(0).getBBox().height;
-    var maxVal = maxScaleVal; // 未実装
-    var maxHeight = maxScaleHeight;
+
+    var convertRate = maxScaleVal / maxScaleHeight;
 
     showInfo("maxScaleHeight : " + maxScaleHeight);
     showInfo("maxScaleVal : " + maxScaleVal);
+    showInfo("convertRate : " + convertRate);
 
     // calculate each graphBar value
     var graphBarValues = Array();
     var graphBars = $(graphs[i]).find("rect");
     graphBars.each(function() {
       var barHeight = $(this).attr("height");
-      graphBarValues.push(barHeight);
-      if(barHeight - maxHeight > 0) {
-        maxHeight = barHeight;
-        showInfo("maxHeight : " + maxHeight);
-        // TODO: マウスオーバーで最大値を取ってくる必要がある
-        // $(this).trigger('mouseenter');
-        // maxVal = $(hoveredValues[i]).find("h2").text();
-      }
+      var da = Math.pow(10, digitAccuracy[i]); // 有効数字計算のための変数
+      graphBarValues.push(parseInt(barHeight * convertRate * da)/da);
     });
 
-    // convertRate[i] = maxVal / maxHeight; // TODO: maxVal を取得する
-    convertRate[i] = maxHeight;
-    showInfo("convertRate : " + convertRate[i]);
-
-    // for(var j=0; j<graphBarValues.length; j++) {
-    //   graphBarValues[j] *= convertRate[i]
-    // }
-
     statsData[i] = graphBarValues;
-    statsData[i].unshift(convertRate[i]);
+    statsData[i].unshift(convertRate);
 
     showInfo(separator + "done");
   }
